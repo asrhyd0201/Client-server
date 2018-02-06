@@ -1,0 +1,50 @@
+#### Internal Machine Ip address:172.16.12.2 ####
+#### Firewall Internal Interface:172.16.12.3 ####
+#### Firewall External Interface:172.16.1.5 ####
+#### External Machine Ip address:172.16.1.2 ####
+
+#### eth1-----Firewall Internal Interface ####
+#### eth0-----Firewall External Interface ####
+
+#1.Deny all traffic not allowed otherwise
+
+iptables -A INPUT -j DROP
+iptables -A FORWARD -j DROP
+
+#2.Masquerade the ip address of your internal network(10.1.1) NAT.Only your local Ip's from the internal interfaces should be masqueraded.
+
+############### PreRouting statements for 1:1 NAT(connections originating from the internet)
+iptables -t nat -A PREROUTING -d 172.16.1.2 -i eth0 -j DNAT --to-destination 172.16.12.3
+
+############### PostRouting statements for 1:1 NAT(Connections originating from the home network servers)#
+iptables -t nat -A POSTROUTING -s 172.16.1.2 -o eth1 -j SNAT --to-source 172.16.1.5
+
+#3.permit all outgoing connections from your internal network to the outside 	   
+
+iptables -A OUTPUT -j ACCEPT	   
+
+#4.Forward Connections to port 23 from the outside to port 23 of your internal machine
+############## Internal Machine to Internet Communication
+
+iptables -A FORWARD -d 0/0 -o eth0 -s 172.16.12.2 -i eth1 -p tcp --sport 23 -j ACCEPT
+############## Internet to Internal Machine Communication
+iptables -A FORWARD -s 0/0 -i eth0 -d 172.16.12.2 -o eth1 -p tcp --dport 23 -j ACCEPT
+
+
+#5.Disallow all connections to your firewall from the outside except ping and Port 23 traffic.
+
+iptables -A INPUT -i leo -j ACCEPT
+
+#6.Allow connections from the inside of your network to your firewall.
+
+iptables -A INPUT -i eth1 -d 172.16.12.3 -p all -j ACCEPT
+iptables -A OUTPUT -o eth1 -s 172.16.12.3 -p all -j ACCEPT
+
+#7.Write rules to avoid tcp type DOS attacks like ACK,FIN FIN. (Atleast 4 Rules)
+
+iptables -A INPUT -i eth0 -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP
+iptables -A INPUT -i eth0 -p tcp -m tcp --tcp-flags FIN,SYN FIN,SYN -j DROP
+iptables -A INPUT -i eth0 -p tcp -m tcp --tcp-flags SYN,RST SYN,RST -j DROP
+iptables -A INPUT -i eth0 -p tcp -m tcp --tcp-flags FIN,RST FIN,RST -j DROP
+iptables -A INPUT -i eth0 -p tcp -m tcp --tcp-flags FIN,ACK FIN -j DROP
+iptables -A INPUT -i eth0 -p tcp -m tcp --tcp-flags ACK,URG URG -j DROP

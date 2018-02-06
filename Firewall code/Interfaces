@@ -1,0 +1,60 @@
+#### Internal Machine Ip address:172.16.12.2 ####
+#### Firewall Internal Interface:172.16.12.3 ####
+#### Firewall External Interface:172.16.1.5 ####
+#### External Machine Ip address:172.16.1.2 ####
+
+#### eth1-----Firewall Internal Interface ####
+#### eth0-----Firewall External Interface ####        
+
+
+                                             Configuring Interfaces
+
+
+Source Host
+
+Ip Address : 172.16.12.2
+N/w Address : 172.16.12.0
+Subnet Mask : 255.255.255.0
+
+Destination   |   Gateway
+______________|_________________________________
+              |
+172.16.1.0    |   172.16.12.3
+172.16.12.0   |   172.16.12.2
+              |
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Destination Host
+
+Ip Address : 172.16.1.2
+N/w Address : 172.16.1.0
+Subnet Mask : 255.255.255.0
+
+Destination   |   Gateway
+______________|_________________________________
+              |
+172.16.1.0    |   172.16.1.2
+default       |   172.16.1.5
+              |
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Firewall
+
+#### Firewall Internal Interface:172.16.12.3 ####
+#### Firewall External Interface:172.16.1.5 ####
+
+#### eth1-----Firewall Internal Interface ####
+#### eth0-----Firewall External Interface ####
+
+
+Destination   |   Gateway
+______________|_________________________________
+              |
+172.16.1.0    |   172.16.1.5
+172.16.12.0   |   172.16.12.3
+              |
+ 
