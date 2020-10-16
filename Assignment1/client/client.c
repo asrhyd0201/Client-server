@@ -1,4 +1,7 @@
 /*Program Written by A.SRINIVAS REDDY      ROLL NO:201006001     MTECH-CSIS
+
+/client.c file changes on client branch**/
+
 Program Secure file transfer*/
 #include <stdio.h>
 #include<string.h>
@@ -12,7 +15,7 @@ Program Secure file transfer*/
 #include <sys/socket.h>
 #include <sys/wait.h>
 #include <netinet/in.h>
-#include "sha1.h"
+
 
 #define STACK_SIZE 10000
 #define NOT_EXIST 0xFFFF
